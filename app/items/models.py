@@ -1,5 +1,7 @@
 from django.db import models
 
+from app.settings import MEDIA_URL
+
 IN_STOCK = 'В НАЛИЧИИ'
 UNDER_THE_ORDER = 'ПОД ЗАКАЗ'
 EXPECTED_RECEIPT = 'ОЖИДАЕТСЯ ПОСТУПЛЕНИЕ'
@@ -29,6 +31,19 @@ class Item(models.Model):
     )
     image = models.ImageField(
         'Картинка',
-        upload_to='img/',
+        upload_to=MEDIA_URL,
         blank=True
     )
+    
+    def __str__(self) -> str:
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if self.image.path.split('.')[1] == ('png' or 'jpg'):
+            self.status = OUT_OF_STOCK
+            super(Item, self).save(*args, **kwargs)
+        super(Item, self).save(*args, **kwargs)
+
+            
+
+
