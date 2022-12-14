@@ -1,6 +1,8 @@
+import uuid
 from django.db import models
 
-from app.settings import MEDIA_URL
+from .fields import PhotoField
+
 
 IN_STOCK = 'В НАЛИЧИИ'
 UNDER_THE_ORDER = 'ПОД ЗАКАЗ'
@@ -16,6 +18,9 @@ ITEM_STATUSES = (
     (NOT_PRODUCTED, 'Не производится')
 )
 
+def image_folder(instance, filename):
+    return 'img/{}.webp'.format(uuid.uuid4().hex)
+
 class Item(models.Model):
     name = models.CharField('название', max_length=200)
     number = models.PositiveIntegerField(
@@ -29,21 +34,11 @@ class Item(models.Model):
         choices=ITEM_STATUSES,
         default=OUT_OF_STOCK
     )
-    image = models.ImageField(
+    image = PhotoField(
         'Картинка',
-        upload_to=MEDIA_URL,
+        upload_to=image_folder,
         blank=True
     )
     
     def __str__(self) -> str:
         return self.name
-    
-    def save(self, *args, **kwargs):
-        if self.image.path.split('.')[1] == ('png' or 'jpg'):
-            self.status = OUT_OF_STOCK
-            super(Item, self).save(*args, **kwargs)
-        super(Item, self).save(*args, **kwargs)
-
-            
-
-
