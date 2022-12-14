@@ -83,7 +83,6 @@ pip install -r requirements.txt
 ```
 python3 manage.py migrate
 ```
-```
 Создать пользователя:
 ```
 python3 manage.py createsuperuser
